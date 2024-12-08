@@ -1,0 +1,21 @@
+id,name,category,location,rating
+1,Fushimi Inari Taisha,Historical,Kyoto,4.9
+2,Kinkakuji,Historical,Kyoto,4.8
+3,Arashiyama Bamboo Grove,Nature,Kyoto,4.7
+4,Osaka Castle,Historical,Osaka,4.6
+5,Umeda Sky Building,Nature,Osaka,4.5
+6,Nara Park,Nature,Nara,4.4
+7,Mount Fuji,Nature,Shizuoka,4.9
+8,Himeji Castle,Historical,Hyogo,4.8
+9,Shinjuku Gyoen,Nature,Tokyo,4.7
+10,Tokyo Tower,Historical,Tokyo,4.6
+11,Asakusa Temple,Historical,Tokyo,4.5
+12,Matsumoto Castle,Historical,Nagano,4.4
+13,Kobe Harborland,Nature,Kobe,4.5
+14,Okinawa Churaumi Aquarium,Nature,Okinawa,4.8
+15,Nikko Toshogu Shrine,Historical,Tochigi,4.7
+16,Hakone Open Air Museum,Nature,Hakone,4.6
+17,Kiyomizu-dera,Historical,Kyoto,4.8
+18,Miyajima Itsukushima Shrine,Nature,Hiroshima,4.7
+19,Kamakura Great Buddha,Historical,Kanagawa,4.6
+20,Tsumago-juku,Nature,Nagano,4.5
