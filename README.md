@@ -1,4 +1,4 @@
-## TripChoseAI: 여행지 추천 AI 모델
+## TripChoseAI : 여행지 추천 AI 모델
 
 **TripChoseAI**는 사용자의 평점 데이터를 분석하여 개인화된 여행지 추천을 제공하는 Flask 기반 애플리케이션입니다.  
 TensorFlow 기반의 추천 알고리즘을 사용하여 사용자 선호도를 반영하며, 간편한 JSON API로 통합 가능합니다.
