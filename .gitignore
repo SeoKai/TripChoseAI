@@ -1,0 +1,29 @@
+# Python 관련
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.sqlite3
+*.log
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# 가상 환경
+venv/
+.env
+
+# TensorFlow 및 머신러닝 관련
+saved_model/
+*.h5
+*.keras
+*.ckpt
+events.out.tfevents.*
+
+# 운영 체제별
+.DS_Store
+Thumbs.db
+
+# 기타 편집기 관련
+.idea/
+.vscode/

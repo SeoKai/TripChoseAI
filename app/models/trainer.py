@@ -180,9 +180,12 @@ if __name__ == "__main__":
     # 모델 학습
     model = train_model(data, num_users, num_places)
 
+    # 모델 저장 경로
+    save_path = os.path.join(BASE_DIR, "app", "models", "saved_model", "recommender_model.keras")
+
     # 모델 저장
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
     save_model(model, save_path)
-    
+
     # 저장 후 모델 출력
     model.summary()

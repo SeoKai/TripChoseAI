@@ -1,27 +1,32 @@
-# Flask 관련 모듈 임포트
+import os
+import pandas as pd
 from flask import Blueprint, request, jsonify
-
-# 추천 시스템 및 모델 관련 모듈 임포트
 from app.models.recommender import recommend_places
 from app.models.trainer import load_model
 
-# 데이터 처리 및 파일 경로 관련 모듈 임포트
-import pandas as pd
+# 현재 파일을 기준으로 프로젝트 루트 경로 설정
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
-# 모델 로드
-model_path = "C:/TripChose/app/models/saved_model/recommender_model.keras"
+# 모델 경로와 데이터 경로 설정
+model_path = os.path.join(BASE_DIR, "app", "models", "saved_model", "recommender_model.keras")
+data_path = os.path.join(BASE_DIR, "data", "places.csv")
+
+# 경로 확인 출력
+print(f"Model Path: {model_path}")
+print(f"Data Path: {data_path}")
+
+# 모델 및 데이터 로드
 model = load_model(model_path)
-
-# 여행지 데이터 로드
-data_path = "C:/TripChose/data/places.csv"
 places_df = pd.read_csv(data_path)
+
+# Flask Blueprint 생성
+bp = Blueprint('routes', __name__)
+
 
 # 전역 변수 정의
 num_places = len(places_df)  # 여행지 총 개수
 places = places_df['name'].tolist()  # 여행지 이름 리스트
 
-# Flask Blueprint 생성
-bp = Blueprint('routes', __name__)
 
 
 # 추천 API 엔드포인트 정의
