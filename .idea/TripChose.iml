@@ -5,8 +5,9 @@
       <excludeFolder url="file://$MODULE_DIR$/.venv" />
       <excludeFolder url="file://$MODULE_DIR$/app/models/saved_model" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
+      <excludeFolder url="file://$MODULE_DIR$/app/venv" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.11 virtualenv at C:\Hand_Trip\TripChoseAI\venv" jdkType="Python SDK" />
+    <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
 </module>

@@ -29,7 +29,7 @@ def recommend_places(model, user_id, num_places, places):
 
     # 예측 점수를 기준으로 장소 정렬
     sorted_indices = predictions[:, 0].argsort()[::-1]  # 내림차순으로 정렬
-    top_indices = sorted_indices[:3]  # 상위 3개 장소 선택
+    top_indices = sorted_indices[:8]  # 상위 8개 장소 선택
     recommendations = [places[i] for i in top_indices]  # 장소 이름 매칭
 
     return recommendations
