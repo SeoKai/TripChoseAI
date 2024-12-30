@@ -46,37 +46,27 @@ def initialize_model():
 
 @bp.route('/recommend', methods=['POST'])
 def recommend():
+    # Content-Type 확인
+    if not request.is_json:
+        print("Content-Type 오류: JSON이 아님")
+        return jsonify({"error": "Content-Type must be application/json"}), 415
+
+    # 요청 데이터 확인
+    data = request.get_json()
+    print("받은 데이터:", data)
+
     try:
-        # Content-Type 확인
-        if not request.is_json:
-            print("Content-Type 오류: JSON이 아님")
-            return jsonify({"error": "Content-Type must be application/json"}), 415
-
-        # 클라이언트로부터 받은 JSON 데이터 파싱
-        data = request.get_json()
-        print("받은 데이터:", data)
-
         user_id = data.get("user_id")
         if user_id is None:
             print("user_id가 요청 데이터에 없음")
             return jsonify({"error": "Missing user_id in request"}), 400
 
-        # 모델 로드 확인
-        if model is None:
-            print("모델이 로드되지 않음")
-            return jsonify({"error": "Model not loaded. Train the model first."}), 500
-
-        # user_id 범위 확인
-        if user_id < 0 or user_id >= model.num_users:
-            print(f"user_id {user_id}가 범위를 초과함")
-            return jsonify({"error": f"user_id must be between 0 and {model.num_users - 1}"}), 400
-
-        # 추천 결과 생성
-        recommendations = recommend_places(model, user_id, num_places=num_places, places=places)
+        # 추천 로직 실행
+        recommendations = recommend_places(model, user_id, num_places, places)
         print("추천 결과:", recommendations)
 
-        return jsonify({"recommendations": recommendations})
-
+        # JSON 배열로 반환
+        return jsonify(recommendations), 200
     except Exception as e:
-        print(f"Unhandled Error: {e}")
-        return jsonify({"error": "Internal server error"}), 500
+        print(f"Error: {e}")
+        return jsonify({"error": str(e)}), 500

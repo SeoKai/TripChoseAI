@@ -22,7 +22,7 @@ def load_data():
     ai_user_query = "SELECT user_id, location_id, rating FROM tbl_ai_user"
     ai_user_data = pd.read_sql(ai_user_query, con=engine)
 
-    # 관광명소 태그에 해당하는 tbl_location 데이터 가져오기
+    # 음식 태그를 제외한 tbl_location 데이터 가져오기
     location_query = """
         SELECT 
             l.location_id AS id, 
@@ -35,12 +35,19 @@ def load_data():
         JOIN 
             tbl_tag t ON lt.tag_id = t.tag_id
         WHERE 
-            t.tag_name = '관광명소';
+            t.tag_name IN ('관광명소', '랜드마크', '문화', '쇼핑') -- 선택된 태그만 포함
+            AND l.location_id NOT IN (
+                SELECT lt.location_id 
+                FROM tbl_location_tag lt
+                JOIN tbl_tag t ON lt.tag_id = t.tag_id
+                WHERE t.tag_name = '음식' -- 음식 태그가 포함된 장소 제외
+            )
+        GROUP BY 
+            l.location_id, l.location_name, l.google_rating;
     """
     location_data = pd.read_sql(location_query, con=engine)
 
     return ai_user_data, location_data
-
 
 
 def get_max_ids():
@@ -50,7 +57,7 @@ def get_max_ids():
     query = text("""
         SELECT 
             (SELECT MAX(user_id) FROM tbl_ai_user) AS max_user_id,
-            (SELECT MAX(location_id) FROM tbl_ai_user) AS max_location_id
+            (SELECT MAX(location_id) FROM tbl_location) AS max_location_id
     """)
 
     with engine.connect() as connection:
