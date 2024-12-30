@@ -39,41 +39,44 @@ def initialize_model():
         except FileNotFoundError:
             print("모델 파일이 없습니다. API 호출 전 학습을 진행하세요.")
             model = None
+        except Exception as e:
+            print(f"모델 로드 중 오류 발생: {e}")  # 예외 메시지 출력
+            model = None
 
 
 @bp.route('/recommend', methods=['POST'])
 def recommend():
-    """
-    추천 API 엔드포인트
-    """
     try:
         # Content-Type 확인
         if not request.is_json:
+            print("Content-Type 오류: JSON이 아님")
             return jsonify({"error": "Content-Type must be application/json"}), 415
 
         # 클라이언트로부터 받은 JSON 데이터 파싱
         data = request.get_json()
-        user_id = data.get("user_id")
+        print("받은 데이터:", data)
 
-        # user_id가 포함되어 있는지 확인
+        user_id = data.get("user_id")
         if user_id is None:
+            print("user_id가 요청 데이터에 없음")
             return jsonify({"error": "Missing user_id in request"}), 400
 
-        # 모델이 로드되지 않은 경우 에러 반환
+        # 모델 로드 확인
         if model is None:
+            print("모델이 로드되지 않음")
             return jsonify({"error": "Model not loaded. Train the model first."}), 500
 
-        # user_id가 모델의 범위 내에 있는지 확인
+        # user_id 범위 확인
         if user_id < 0 or user_id >= model.num_users:
+            print(f"user_id {user_id}가 범위를 초과함")
             return jsonify({"error": f"user_id must be between 0 and {model.num_users - 1}"}), 400
 
         # 추천 결과 생성
         recommendations = recommend_places(model, user_id, num_places=num_places, places=places)
+        print("추천 결과:", recommendations)
 
-        # 추천 결과를 JSON 형태로 반환
         return jsonify({"recommendations": recommendations})
 
     except Exception as e:
-        # 예외 처리 및 에러 메시지 반환
-        print(f"Error: {e}")  # 로그로 에러 출력
+        print(f"Unhandled Error: {e}")
         return jsonify({"error": "Internal server error"}), 500
