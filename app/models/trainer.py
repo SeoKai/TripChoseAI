@@ -1,3 +1,4 @@
+from app.config.app_config import MODEL_DIR, MODEL_PATH
 import os
 import tensorflow as tf
 from app.config.db_config import load_data, get_max_ids
@@ -87,7 +88,9 @@ def save_model(model, path):
         model (RecommenderModel): 저장할 모델
         path (str): 모델 저장 경로
     """
-    print(f"모델을 {path}에 저장합니다...")
+    print(f"모델을 {os.path.relpath(path)}에 저장합니다...")
+    os.makedirs(MODEL_DIR, exist_ok=True)  # 디렉토리 생성
+    model.save(path, include_optimizer=False)  # 옵티마이저 상태 제외
     model.save(path)
     print("모델 저장 완료")
 
@@ -98,11 +101,12 @@ def load_model(path):
     """
     try:
         if not os.path.exists(path):
-            raise FileNotFoundError(f"모델 파일이 없습니다: {path}")
-        print(f"{path}에서 모델을 로드합니다...")
+            raise FileNotFoundError(f"모델 파일이 없습니다: {os.path.relpath(path)}")
+        print(f"{os.path.relpath(path)}에서 모델을 로드합니다...")
         model = tf.keras.models.load_model(
-            path, custom_objects={"RecommenderModel": RecommenderModel}
+            path, custom_objects={"RecommenderModel": RecommenderModel}, compile=False
         )
+        model.compile(optimizer="adam", loss="mse")  # 옵티마이저 재설정
         print("모델 로드 완료")
         return model
     except Exception as e:
@@ -111,15 +115,13 @@ def load_model(path):
 
 
 if __name__ == "__main__":
-    # 모델 저장 경로
-    save_path = os.path.abspath(os.path.join("saved_model","recommender_model.keras"))
-    print(f"모델 저장 경로: {save_path}")
+    print(f"모델 저장 경로: {os.path.relpath(MODEL_PATH)}")
 
     # 모델 파일 존재 여부 확인
-    if os.path.exists(save_path):
-        print(f"모델 파일이 존재합니다. 로드 시도 중: {save_path}")
+    if os.path.exists(MODEL_PATH):
+        print(f"모델 파일이 존재합니다. 로드 시도 중: {os.path.relpath(MODEL_PATH)}")
         try:
-            model = load_model(save_path)
+            model = load_model(MODEL_PATH)
             print("모델 로드 성공!")
         except Exception as e:
             print(f"모델 로드 중 오류 발생: {e}")
@@ -141,5 +143,5 @@ if __name__ == "__main__":
         model = train_model(data, max_user_id, max_location_id)
 
         # 모델 저장
-        save_model(model, save_path)
+        save_model(model, MODEL_PATH)
         print("모델 학습 및 저장 완료.")
