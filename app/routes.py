@@ -9,7 +9,7 @@ bp = Blueprint('routes', __name__)
 
 # 모델 경로 설정
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-model_path = os.path.join(BASE_DIR,"app", "models", "saved_model", "recommender_model.keras")
+model_path = os.path.join(BASE_DIR, "app", "models", "saved_model", "recommender_model.keras")
 
 # 경로 확인 출력
 print(f"Model Path: {model_path}")
@@ -37,21 +37,25 @@ def recommend():
     추천 API 엔드포인트
     """
     try:
+        # Content-Type 확인
+        if not request.is_json:
+            return jsonify({"error": "Content-Type must be application/json"}), 415
+
         # 클라이언트로부터 받은 JSON 데이터 파싱
         data = request.get_json()
         user_id = data.get("user_id")
 
         # user_id가 포함되어 있는지 확인
         if user_id is None:
-            return jsonify({"error": "user_id를 포함해야 합니다."}), 400
+            return jsonify({"error": "Missing user_id in request"}), 400
 
         # 모델이 로드되지 않은 경우 에러 반환
         if model is None:
-            return jsonify({"error": "모델이 로드되지 않았습니다. 먼저 학습을 완료하세요."}), 500
+            return jsonify({"error": "Model not loaded. Train the model first."}), 500
 
         # user_id가 모델의 범위 내에 있는지 확인
         if user_id < 0 or user_id >= model.num_users:
-            return jsonify({"error": f"user_id는 0에서 {model.num_users - 1} 사이여야 합니다."}), 400
+            return jsonify({"error": f"user_id must be between 0 and {model.num_users - 1}"}), 400
 
         # 추천 결과 생성
         recommendations = recommend_places(model, user_id, num_places=5, places=places)
@@ -61,4 +65,5 @@ def recommend():
 
     except Exception as e:
         # 예외 처리 및 에러 메시지 반환
-        return jsonify({"error": str(e)}), 500
+        print(f"Error: {e}")  # 로그로 에러 출력
+        return jsonify({"error": "Internal server error"}), 500
