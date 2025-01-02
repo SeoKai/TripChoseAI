@@ -3,10 +3,10 @@ from sqlalchemy import create_engine, text
 
 # SQLAlchemy 엔진 설정
 db_config = {
-    "host": "localhost",        # MySQL 서버 호스트
-    "user": "root",             # 사용자 이름
-    "password": "1234",         # 비밀번호
-    "database": "testdb"        # 데이터베이스 이름
+    "host": "database-trip.cvm0eac28eqd.ap-northeast-2.rds.amazonaws.com",        # MySQL 서버 호스트
+    "user": "admin",             # 사용자 이름
+    "password": "trip970708!",         # 비밀번호
+    "database": "tripdb"        # 데이터베이스 이름
 }
 
 # SQLAlchemy 연결 URI
