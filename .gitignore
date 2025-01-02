@@ -14,11 +14,11 @@ venv/
 .env
 
 # TensorFlow 및 머신러닝 관련
-saved_model/
-*.h5
-*.keras
-*.ckpt
-events.out.tfevents.*
+#saved_model/
+#*.h5
+#*.keras
+#*.ckpt
+#events.out.tfevents.*
 
 # 운영 체제별
 .DS_Store
