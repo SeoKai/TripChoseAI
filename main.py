@@ -7,4 +7,4 @@ app = create_app()
 # Python 스크립트가 직접 실행될 경우 Flask 개발 서버 시작
 if __name__ == "__main__":
     # 디버그 모드로 Flask 서버 실행
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
