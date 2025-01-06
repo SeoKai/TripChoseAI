@@ -69,7 +69,11 @@ def train_model(train_data, max_user_id, max_location_id):
     model = RecommenderModel(num_users, num_places)
 
     print("모델 구조:")
-    model.summary()
+    # 모델 요약 출력
+    print("-" * 80)
+    model.build(input_shape=[(None,), (None,)])  # 입력 크기 명시 (필수)
+    model.summary()  # 상세 구조 출력
+    print("-" * 80)
 
     model.compile(optimizer='adam', loss='mse')
 
@@ -77,7 +81,23 @@ def train_model(train_data, max_user_id, max_location_id):
     print("모델 학습 시작")
     model.fit((X_train[:, 0], X_train[:, 1]), y_train, epochs=10, batch_size=32)
     print("모델 학습 완료")
+
+    # 모델 학습 완료 후 파라미터 출력
+    calculate_total_parameters(model)
+
     return model
+
+def calculate_total_parameters(model):
+    """
+    모델의 총 파라미터 수 계산
+    """
+    trainable_params = sum(tf.reduce_prod(var.shape) for var in model.trainable_variables)
+    non_trainable_params = sum(tf.reduce_prod(var.shape) for var in model.non_trainable_variables)
+
+    print("\n모델 파라미터 정보:")
+    print(f"  총 파라미터 수: {trainable_params + non_trainable_params}")
+    print(f"  학습 가능한 파라미터: {trainable_params}")
+    print(f"  학습 불가능한 파라미터: {non_trainable_params}")
 
 
 def save_model(model, path):
