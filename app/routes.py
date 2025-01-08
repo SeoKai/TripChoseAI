@@ -60,6 +60,10 @@ class RecommenderService:
         return recommend_places(self.model, user_id, self.num_places, self.places)
 
 
+# RecommenderService 인스턴스 생성 및 초기화
+service = RecommenderService(model_path=MODEL_PATH)
+service.initialize()  # 앱 시작 시 모델과 데이터 초기화
+
 @bp.route('/recommend', methods=['POST'])
 def recommend():
     # Content-Type 확인
@@ -77,12 +81,15 @@ def recommend():
             logger.warning("user_id가 요청 데이터에 없음")
             return jsonify({"error": "user_id가 요청 데이터에 없습니다."}), 400
 
-        # 추천 로직 실행
-        recommendations = recommend_places(model, user_id, num_places, places)
+        # RecommenderService 인스턴스를 통해 추천 로직 실행
+        recommendations = service.recommend(user_id)
         logger.info(f"추천 결과: {recommendations}")
 
         # JSON 배열로 반환
         return jsonify(recommendations), 200
-    except Exception as e:
+    except RuntimeError as e:
         logger.error(f"추천 API 처리 중 오류 발생: {e}")
         return jsonify({"error": str(e)}), 500
+    except Exception as e:
+        logger.error(f"추천 API 처리 중 예기치 못한 오류 발생: {e}")
+        return jsonify({"error": "알 수 없는 오류가 발생했습니다."}), 500
