@@ -81,18 +81,14 @@ def load_model(path):
 if __name__ == "__main__":
     print(f"모델 경로 확인: {MODEL_PATH}")
 
-    if os.path.exists(MODEL_PATH):
-        try:
-            model = load_model(MODEL_PATH)
-        except FileNotFoundError as e:
-            print(f"모델 로드 실패: {e}")
-    else:
-        print("모델 파일이 존재하지 않습니다. 학습을 시작합니다...")
-        ai_user_data, location_data = load_data()
-        max_user_id, max_location_id = get_max_ids()
+    # 항상 학습을 다시 실행
+    print("모델 학습을 시작합니다...")
+    ai_user_data, location_data = load_data()
+    max_user_id, max_location_id = get_max_ids()
 
-        train_data = ai_user_data[['user_id', 'location_id', 'rating']]
-        train_data.columns = ['user_id', 'place_id', 'rating']
+    train_data = ai_user_data[['user_id', 'location_id', 'rating']]
+    train_data.columns = ['user_id', 'place_id', 'rating']
 
-        model = train_model(train_data, max_user_id, max_location_id)
-        save_model(model, MODEL_PATH)
+    model = train_model(train_data, max_user_id, max_location_id)
+    save_model(model, MODEL_PATH)
+    print("모델 학습 및 저장 완료")

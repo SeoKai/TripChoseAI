@@ -21,19 +21,24 @@ def recommend_places(model, user_id, num_places, places):
         raise ValueError("유효한 장소 개수 또는 장소 리스트를 제공해야 합니다.")
 
     try:
+        # 장소 개수와 리스트 길이 동기화
+        if num_places > len(places):
+            num_places = len(places)
+
         # 입력 데이터 생성
         user_array = tf.constant([user_id] * num_places)
         place_array = tf.constant(range(num_places))
 
         # 모델 예측 수행
         predictions = model.predict([user_array, place_array])
+        predictions = tf.squeeze(predictions).numpy()  # 2D -> 1D 변환
 
         # 예측 점수 기준 정렬
-        sorted_indices = tf.argsort(predictions[:, 0], direction='DESCENDING')
-        top_indices = sorted_indices[:4].numpy()
+        sorted_indices = tf.argsort(predictions, direction='DESCENDING').numpy()
+        valid_indices = [i for i in sorted_indices[:4] if i < len(places)]  # 상위 10개 필터링
 
-        # 상위 4개의 추천 장소 반환
-        recommendations = [places[i] for i in top_indices]
+        # 상위 추천 장소 반환
+        recommendations = [places[i] for i in valid_indices]
         return recommendations
 
     except Exception as e:

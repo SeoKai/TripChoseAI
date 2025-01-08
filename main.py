@@ -45,8 +45,14 @@ def update_model_periodically(app):
             # 모델 저장
             save_model(model, MODEL_PATH)
             print("모델 업데이트 및 저장 완료.")
+
+            # RecommenderService에서 모델 재로드
+            recommender_service.reload_model()
+            print("RecommenderService에서 모델을 재로드했습니다.")
+
         except Exception as e:
             print(f"모델 업데이트 중 오류 발생: {e}")
+
 
 if __name__ == "__main__":
     print("Flask 애플리케이션 초기화 중...")
@@ -56,7 +62,7 @@ if __name__ == "__main__":
 
     # 스케줄러 설정
     scheduler = BackgroundScheduler()
-    scheduler.add_job(func=lambda: update_model_periodically(app), trigger="interval", seconds=60)
+    scheduler.add_job(func=lambda: update_model_periodically(app), trigger="interval", seconds=10)
     scheduler.start()
 
     # 애플리케이션 종료 시 스케줄러 종료

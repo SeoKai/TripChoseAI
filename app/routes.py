@@ -1,6 +1,6 @@
 import logging
 from flask import Blueprint, request, jsonify
-from app.config.db_config import load_data  # 데이터베이스 로드 함수
+from app.config.db_config import load_data, get_max_ids  # 데이터베이스 로드 함수
 from app.models.trainer import load_model  # 모델 로드 함수
 from app.models.recommender import recommend_places  # 추천 로직 함수
 from app.config.app_config import MODEL_PATH
@@ -57,7 +57,30 @@ class RecommenderService:
         """
         if self.model is None:
             raise RuntimeError("모델이 초기화되지 않았습니다. 학습 후 다시 시도하세요.")
+
+        # 사용자 ID 검증
+        if user_id < 0 or user_id >= self.num_users:
+            raise ValueError(f"user_id {user_id}는 모델의 사용자 범위를 초과합니다. (모델 사용자 수: {self.num_users})")
+
+        # 추천 로직 실행
         return recommend_places(self.model, user_id, self.num_places, self.places)
+
+    def reload_model(self):
+        """
+        저장된 모델을 다시 로드하고, num_users와 num_places를 업데이트합니다.
+        """
+        try:
+            logger.info(f"모델 재로드 중: {self.model_path}")
+            self.model = load_model(self.model_path)
+
+            # 데이터베이스에서 최신 user_id 및 place_id 가져오기
+            max_user_id, max_place_id = get_max_ids()
+            self.num_users = max_user_id + 1
+            self.num_places = max_place_id + 1
+
+            logger.info(f"모델 재로드 성공! num_users={self.num_users}, num_places={self.num_places}")
+        except Exception as e:
+            logger.error(f"모델 재로드 중 오류 발생: {e}")
 
 
 # RecommenderService 인스턴스 생성 및 초기화
@@ -80,6 +103,9 @@ def recommend():
         if user_id is None:
             logger.warning("user_id가 요청 데이터에 없음")
             return jsonify({"error": "user_id가 요청 데이터에 없습니다."}), 400
+
+        # 최신 모델 로드
+        service.reload_model()
 
         # RecommenderService 인스턴스를 통해 추천 로직 실행
         recommendations = service.recommend(user_id)
