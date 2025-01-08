@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     # 스케줄러 설정
     scheduler = BackgroundScheduler()
-    scheduler.add_job(func=lambda: update_model_periodically(app), trigger="interval", seconds=10)
+    scheduler.add_job(func=lambda: update_model_periodically(app), trigger="interval", seconds=60)
     scheduler.start()
 
     # 애플리케이션 종료 시 스케줄러 종료
