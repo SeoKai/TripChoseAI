@@ -6,15 +6,34 @@ from app.config.db_config import load_data, get_max_ids
 
 class RecommenderModel(tf.keras.Model):
     """
-    추천 시스템 모델 정의
+    딥러닝 기반 협업 필터링 추천 모델 정의 (행렬 분해 방식)
+
+    사용자 ID와 장소 ID를 각각 임베딩 벡터로 변환한 뒤,
+    두 벡터 간의 내적(Dot Product)을 통해 예상 평점을 계산하는 구조로,
+    전통적인 Matrix Factorization을 신경망으로 구현한 형태입니다
     """
     def __init__(self, num_users, num_places, embedding_dim=50, **kwargs):
+
+        """
+        모델 초기화 함수
+
+        Args:
+            num_users (int): 사용자 수 (user_id는 0부터 시작)
+            num_places (int): 장소 수 (place_id는 0부터 시작)
+            embedding_dim (int): 임베딩 차원 (default: 50)
+        """
         super(RecommenderModel, self).__init__(**kwargs)
         self.num_users = num_users
         self.num_places = num_places
         self.embedding_dim = embedding_dim
+
+        # 사용자 ID를 임베딩 벡터로 변환하는 레이어
         self.user_embedding = tf.keras.layers.Embedding(num_users, embedding_dim)
+
+        # 장소 ID를 임베딩 벡터로 변환하는 레이어
         self.place_embedding = tf.keras.layers.Embedding(num_places, embedding_dim)
+
+        # 사용자 벡터와 장소 벡터 간 내적을 통해 평점을 예측하는 레이어
         self.dot = tf.keras.layers.Dot(axes=1)
 
     def call(self, inputs):
